@@ -12,9 +12,12 @@ These object can be used throughout project.
 
 # Setup of key Flask object (app)
 app = Flask(__name__)
-cors = CORS(app, supports_credentials=True)
+cors = CORS(app, supports_credentials=True, origins=['http://localhost:4100', 'http://127.0.0.1:4100', 'https://nighthawkcoders.github.io'])
+
+root_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Setup SQLAlchemy object and properties for the database (db)
+db_file_path = os.path.join(root_dir, 'instance', 'volumes', 'sqlite.db')
 dbURI = 'sqlite:///volumes/sqlite.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURI
@@ -26,4 +29,4 @@ Migrate(app, db)
 # Images storage
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']  # supported file types
-app.config['UPLOAD_FOLDER'] = 'volumes/uploads/'  # location of user uploaded content
+app.config['UPLOAD_FOLDER'] = 'instance/volumes/uploads/'  # location of user uploaded content
