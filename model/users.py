@@ -477,7 +477,14 @@ def initUsers():
             email="ykim@gmail.com",
             dob=date(1945, 8, 9),
         )
-        users = [u1, u2, u3, u4]
+        u5 = User(
+            name="Aiden Kim",
+            uid="aiden",
+            password="123aiden",
+            email="aidenhw.kim@gmail.com",
+            dob=date(2007, 7, 27)
+        )
+        users = [u1, u2, u3, u4, u5]
         # print("-------------------------- USERS -----------------------------")
         # print(users)
         """Builds sample user/note(s) data"""
