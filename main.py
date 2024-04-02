@@ -16,6 +16,7 @@ from api.video import video_api
 # database migrations
 from api.tips import tips_api
 from api.titanic import titanic_api
+from api.comments import comments_api
 
 from model.users import initUsers, initVideos
 # from model.players import initPlayers
@@ -37,6 +38,7 @@ app.register_blueprint(video_api)
 app.register_blueprint(tips_api)
 app.register_blueprint(app_projects) # register app pages
 app.register_blueprint(titanic_api) # register app pages
+app.register_blueprint(comments_api)
 
 @app.errorhandler(404)  # catch for URL not found
 def page_not_found(e):
