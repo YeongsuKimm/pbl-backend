@@ -1,5 +1,5 @@
 import json, jwt
-from flask import Blueprint, request, jsonify, current_app, Response
+from flask import Blueprint, request, jsonify, current_app, Response, make_response
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 from auth_middleware import token_required
@@ -63,7 +63,7 @@ class UserAPI:
         def get(self, current_user): # Read Method
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
-            return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+            return make_response(jsonify(json_ready), 200)  # jsonify creates Flask response object, more specific to APIs than json.dumps
         
 
     class _Update(Resource):
