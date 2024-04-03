@@ -14,10 +14,10 @@ class College(db.Model):
     _link = db.Column(db.String(255), unique=True, nullable=False)
     _image = db.Column(db.String(255), unique=False, nullable=True)
     
-    def __init__(self, name, link, image):
+    def __init__(self, name, link, img):
         self._name = name    # variables with self prefix become part of the object, 
         self._link = link
-        self._image = image
+        self._image = img
 
     # a name getter method, extracts name from object
     @property
@@ -42,8 +42,8 @@ class College(db.Model):
         return self._image
     
     @image.setter
-    def image(self, image):
-        self._image = image
+    def image(self, img):
+        self._image = img
     
     # output content using str(object) in human readable form, uses getter
     # output content using json dumps, this is ready for API response
