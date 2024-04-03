@@ -1,13 +1,10 @@
+#import Flask externalities
 import threading
-
-# import "packages" from flask
-from flask import render_template,request, send_from_directory  # import render_template from "public" flask libraries
+from flask import render_template,request, send_from_directory
 from flask.cli import AppGroup
 
-
-# import "packages" from "this" project
-from __init__ import app, db, cors  # Definitions initialization
-
+# import init stuff
+from __init__ import app, db, cors
 
 # setup APIs
 from api.user import user_api
@@ -16,7 +13,10 @@ from api.stroke import stroke_api
 from api.tips import tips_api
 from api.titanic import titanic_api
 from api.comments import comments_api
+from api.cancer import cancer_api
+from api.happy import happiness_api
 
+#initializers
 from model.users import initUsers
 from model.videos import initVideos
 from model.tips import initTips1
@@ -37,20 +37,26 @@ app.register_blueprint(stroke_api)
 
 # register URIs - ML Projects
 app.register_blueprint(tips_api)
-app.register_blueprint(app_projects) # register app pages
-app.register_blueprint(titanic_api) # register app pages
+app.register_blueprint(titanic_api) 
 app.register_blueprint(comments_api)
+app.register_blueprint(cancer_api)
+app.register_blueprint(happiness_api)
 
-@app.errorhandler(404)  # catch for URL not found
+# register app projects
+app.register_blueprint(app_projects)
+
+# catch for URL not found
+@app.errorhandler(404)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
     return render_template('404.html'), 404
 
-@app.route('/')  # connects default URL to index() function
+# connects default URL to index() function
+@app.route('/')
 def index():
     return render_template("index.html")
 
-@app.route('/table/')  # connects /stub/ URL to stub() function
+# connects /table/ URL to data table html page
+@app.route('/table/')
 def table():
     return render_template("table.html")
 
