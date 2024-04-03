@@ -5,7 +5,7 @@ from datetime import datetime
 from auth_middleware import token_required
 import os
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from model.users import Vid
+from model.videos import Vid
 from model.users import User
 
 

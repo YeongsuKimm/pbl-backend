@@ -61,7 +61,7 @@ class College(db.Model):
 
 
 # Builds working data for testing
-def initPlayers():
+def initColleges():
     with app.app_context():
         db.create_all()
         c1 = College(name='Stanford University',link='https://admission.stanford.edu/apply/',img='https://identity.stanford.edu/wp-content/uploads/sites/3/2020/07/block-s-right.png')

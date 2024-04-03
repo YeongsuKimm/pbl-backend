@@ -10,34 +10,32 @@ from __init__ import app, db, cors  # Definitions initialization
 
 
 # setup APIs
-from api.user import user_api # Blueprint import api definition
+from api.user import user_api
 from api.video import video_api
 from api.stroke import stroke_api
-# from api.player import player_api
-# database migrations
 from api.tips import tips_api
 from api.titanic import titanic_api
 from api.comments import comments_api
 
-from model.users import initUsers, initVideos
-# from model.players import initPlayers
+from model.users import initUsers
+from model.videos import initVideos
 from model.tips import initTips1
 from model.tips2 import initTips2
 from model.titanic import initTitanic
+from model.colleges import initColleges
 
 # setup App pages
-from projects.projects import app_projects # Blueprint directory import projects definition
+from projects.projects import app_projects
 
-
-# Initialize the SQLAlchemy object to work with the Flask app instance
+# Initialize the SQLAlchemy object
 db.init_app(app)
 
-# register URIs
+# register URIs - CPT Projects
 app.register_blueprint(user_api) # register api routes
 app.register_blueprint(video_api)
 app.register_blueprint(stroke_api)
 
-# app.register_blueprint(player_api)
+# register URIs - ML Projects
 app.register_blueprint(tips_api)
 app.register_blueprint(app_projects) # register app pages
 app.register_blueprint(titanic_api) # register app pages
@@ -78,6 +76,7 @@ def generate_data():
     initTips1()
     initTips2()
     initTitanic()
+    initColleges()
     
 
 # Register the custom command group with the Flask application
