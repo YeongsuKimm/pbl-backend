@@ -49,6 +49,49 @@ class College(db.Model):
     # output content using json dumps, this is ready for API response
     def __str__(self):
         return json.dumps(self.read())
+    
+    # CRUD create/add a new record to the table
+    # returns self or None on error
+    def create(self):
+        try:
+            # creates a player object from Player(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist person object to Users table
+            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            return self
+        except IntegrityError:
+            db.session.remove()
+            return None
+
+    # CRUD read converts self to dictionary
+    # returns dictionary
+    def read(self):
+        return {
+            "name": self.name,
+            "link": self.link,
+            "image": self.image
+        }
+
+    # CRUD update: updates name, uid, password, tokens
+    # returns self
+    def update(self, dictionary):
+        """only updates values in dictionary with length"""
+        for key in dictionary:
+            if key == "name":
+                self.name = dictionary[key]
+            if key == "link":
+                self.link = dictionary[key]
+            if key == "image":
+                self.image = dictionary[key]
+        db.session.commit()
+        return self
+
+    # CRUD delete: remove self
+    # return self
+    def delete(self):
+        colleges = self
+        db.session.delete(self)
+        db.session.commit()
+        return colleges
 
     # CRUD read converts self to dictionary
     # returns dictionary
