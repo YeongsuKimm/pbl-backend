@@ -17,12 +17,10 @@ class StrokeAPI:
                 for field in required_fields:
                     if field not in body:
                         return {'message': f'{field} is missing in the request body'}, 400
-                    if not body[field]:
-                        return {'message': f'{field} cannot be empty'}, 400
                 
                 # Instantiate the StrokeModel and predict stroke probability
-                stroke_model = StrokeModel.get_instance("/Users/aiden/Downloads/healthcare-dataset-stroke-data 2.csv")
-                stroke_probability = stroke_model.predict_stroke(body)
+                stroke_model = StrokeModel.get_instance("./healthcare-dataset-stroke-data.csv")
+                stroke_probability = stroke_model.predict_stroke_probability(body)
                 
                 return make_response(jsonify({'stroke_probability': stroke_probability}), 200)
             else:
