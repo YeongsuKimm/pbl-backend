@@ -17,6 +17,7 @@ from api.cancer import cancer_api
 from api.happy import happiness_api
 from api.recipe import recipe_api
 from api.college import college_api
+
 #initializers
 from model.users import initUsers
 from model.videos import initVideos
