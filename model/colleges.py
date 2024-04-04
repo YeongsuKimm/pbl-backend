@@ -1,69 +1,69 @@
+# Import necessary libraries and modules
 import os, base64
 import json
+from __init__ import app, db  # Import the Flask app and SQLAlchemy database instance
+from sqlalchemy.exc import IntegrityError  # For handling unique constraint violations
 
-from __init__ import app, db
-from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
-
-
+# Define the College class to represent the 'colleges' table in the database
 class College(db.Model):
-    __tablename__ = 'colleges'  # table name is plural, class name is singular
+    __tablename__ = 'colleges'  # Specifies the name of the table in the database
 
-    # Define the Player schema with "vars" from object
-    _name = db.Column(db.String(255), unique=True, nullable=False, primary_key=True)
-    _link = db.Column(db.String(255), unique=True, nullable=False)
-    _image = db.Column(db.String(255), unique=False, nullable=True)
+    # Define the columns in the 'colleges' table
+    _name = db.Column(db.String(255), unique=True, nullable=False, primary_key=True)  # College name column, unique and not nullable
+    _link = db.Column(db.String(255), unique=True, nullable=False)  # College link column, unique and not nullable
+    _image = db.Column(db.String(255), nullable=True)  # College image column, can be nullable
     
+    # Constructor to initialize a College object
     def __init__(self, name, link, img):
-        self._name = name    # variables with self prefix become part of the object, 
-        self._link = link
-        self._image = img
+        self._name = name    # Initialize the college name
+        self._link = link    # Initialize the college link
+        self._image = img    # Initialize the college image
 
-    # a name getter method, extracts name from object
+    # Getter for college name
     @property
     def name(self):
         return self._name
     
-    # a setter function, allows name to be updated after initial object creation
+    # Setter for college name
     @name.setter
     def name(self, name):
         self._name = name
     
+    # Getter for college link
     @property
     def link(self):
         return self._link
     
+    # Setter for college link
     @link.setter
     def link(self, link):
         self._link = link
         
+    # Getter for college image
     @property
     def image(self):
         return self._image
     
+    # Setter for college image
     @image.setter
     def image(self, img):
         self._image = img
     
-    # output content using str(object) in human readable form, uses getter
-    # output content using json dumps, this is ready for API response
+    # String representation of the College object in JSON format
     def __str__(self):
         return json.dumps(self.read())
     
-    # CRUD create/add a new record to the table
-    # returns self or None on error
+    # Method to add a new College object to the database
     def create(self):
         try:
-            # creates a player object from Player(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist person object to Users table
-            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            db.session.add(self)  # Add the College object to the database session
+            db.session.commit()  # Commit the transaction to save changes
             return self
-        except IntegrityError:
-            db.session.remove()
+        except IntegrityError:  # Handle unique constraint violations
+            db.session.remove()  # Remove the session to clear the transaction
             return None
 
-    # CRUD read converts self to dictionary
-    # returns dictionary
+    # Method to read and return College object data as a dictionary
     def read(self):
         return {
             "name": self.name,
@@ -71,39 +71,19 @@ class College(db.Model):
             "image": self.image
         }
 
-    # CRUD update: updates name, uid, password, tokens
-    # returns self
+    # Method to update College object data in the database
     def update(self, dictionary):
-        """only updates values in dictionary with length"""
-        for key in dictionary:
-            if key == "name":
-                self.name = dictionary[key]
-            if key == "link":
-                self.link = dictionary[key]
-            if key == "image":
-                self.image = dictionary[key]
-        db.session.commit()
+        for key, value in dictionary.items():
+            setattr(self, key, value)  # Update attributes dynamically based on the dictionary keys and values
+        db.session.commit()  # Commit the changes to the database
         return self
 
-    # CRUD delete: remove self
-    # return self
+    # Method to delete a College object from the database
     def delete(self):
-        colleges = self
-        db.session.delete(self)
-        db.session.commit()
-        return colleges
+        db.session.delete(self)  # Delete the College object from the database session
+        db.session.commit()  # Commit the transaction to finalize the deletion
 
-    # CRUD read converts self to dictionary
-    # returns dictionary
-    def read(self):
-        return {
-            "name": self.name,
-            "link": self.link,
-            "image": self.image
-        }
-
-
-# Builds working data for testing
+# Function to initialize the College data in the database
 def initColleges():
     with app.app_context():
         db.create_all()
@@ -122,10 +102,9 @@ def initColleges():
         
         colleges = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11]
 
-        """Builds sample user/note(s) data"""
         for college in colleges:
             try:
-                college.create()
+                college.create()  # Add each college to the database
             except IntegrityError:
-                db.session.remove()
-                print(f"Records exist, duplicate email, or error: {college.name}")
+                db.session.remove()  # Remove the session if there's an integrity error (e.g., duplicate entry)
+                print(f"Record exists or error for: {college.name}")
