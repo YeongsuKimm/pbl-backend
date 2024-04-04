@@ -16,6 +16,7 @@ from api.comments import comments_api
 from api.cancer import cancer_api
 from api.happy import happiness_api
 from api.recipe import recipe_api
+from api.college import college_api
 #initializers
 from model.users import initUsers
 from model.videos import initVideos
@@ -36,6 +37,7 @@ app.register_blueprint(user_api) # register api routes
 app.register_blueprint(video_api)
 app.register_blueprint(stroke_api)
 app.register_blueprint(recipe_api)
+app.register_blueprint(college_api)
 
 # register URIs - ML Projects
 app.register_blueprint(tips_api)
