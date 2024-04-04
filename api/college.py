@@ -12,11 +12,11 @@ from model.users import User
 from model.colleges import College
 
 # Initialize a Flask Blueprint for the user-related API endpoints with a URL prefix
-user_api = Blueprint('user_api', __name__, url_prefix='/api/users')
-api = Api(user_api)  # Create a Flask-RESTful API object by wrapping the Blueprint
+college_api = Blueprint('college_api', __name__, url_prefix='/api/colleges')
+api = Api(college_api)  # Create a Flask-RESTful API object by wrapping the Blueprint
 
 # Define a class for User API, inheriting from Resource to use with Flask-RESTful
-class UserAPI(Resource):
+class CollegeAPI(Resource):
     # Nested class for handling security-related operations such as user authentication
     class _Security(Resource):
         # POST method for authenticating users and returning JWT
