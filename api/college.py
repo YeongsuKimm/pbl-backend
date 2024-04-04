@@ -110,6 +110,5 @@ class UserAPI: #replace with your own UserAPI instance
 def update_list(self, list=""):
         self.college_list = list
         db.session.commit()
-        print(self.email)
         return self
 '''
