@@ -82,7 +82,7 @@ class UserAPI: #replace with your own UserAPI instance
                     namelist += [elem for elem in selected_names if elem not in namelist]
                     
                     #Update user list - NEEDS CORRESPONDING FUNCTION IN users.py (see below)
-                    user.update_list(namelist)
+                    user.update_list(json.dumps(namelist))
                     
                 
             
