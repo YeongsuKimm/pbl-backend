@@ -88,36 +88,11 @@ def initRecipes():
         db.create_all()
         """Tester records for table"""
         recipe1 = Recipe(
-            name='Pizza',
-            instructions='''1. In a large mixing bowl, combine warm water, yeast, and sugar. Let it sit for 5-10 minutes until foamy.
-2. Add flour, salt, and olive oil to the yeast mixture. Mix until a dough forms.
-3. Knead the dough on a floured surface for about 5-7 minutes until smooth and elastic.
-4. Place the dough in an oiled bowl, cover with a clean towel, and let it rise for 1-1.5 hours until doubled in size.
-5. Preheat the oven to its highest temperature (usually around 500°F or 260°C) and place a pizza stone or baking sheet inside to heat.
-6. Punch down the dough and divide it into two balls for two medium-sized pizzas.
-7. On a floured surface, roll out each dough ball into a circle of desired thickness.
-8. Transfer the dough to a pizza peel or parchment-lined baking sheet.
-9. Spread tomato sauce over the dough, leaving a border for the crust.
-10. Sprinkle shredded mozzarella cheese and desired toppings over the sauce.
-11. Carefully slide the pizza onto the preheated pizza stone or baking sheet in the oven.
-12. Bake for 10-12 minutes or until the crust is golden and the cheese is bubbly and melted.
-13. Remove from the oven, let it cool slightly, slice, and enjoy your homemade pizza!''',
-            supplies='''- Large mixing bowl
-- Clean towel
-- Pizza stone or baking sheet
-- Rolling pin
-- Pizza peel (optional) 
-- Parchment paper''',
-            ingredients='''- 1 ½ cups warm water (about 110°F or 43°C)
-- 1 packet (2 ¼ teaspoons) active dry yeast
-- 1 teaspoon sugar
-- 4 cups all-purpose flour
-- 1 teaspoon salt
-- 2 tablespoons olive oil
-- 1 cup tomato sauce
-- 2 cups shredded mozzarella cheese
-- Toppings of your choice (e.g., pepperoni, sliced bell peppers, onions, mushrooms)'''
-)
+            name='Pizza', 
+            instruction="blah blah blah", 
+            supplies="supplies", 
+            ingredients="Cheese blah afdsj", 
+        )
 
         recipes = [recipe1]
 
