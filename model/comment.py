@@ -41,3 +41,33 @@ class Comment(db.Model):
         db.session.delete(self)
         db.session.commit()
         return None
+    
+def initComments():
+    db.create_all()
+    comment1 = Comment(
+        uid="test1",
+        restaurant="test2",
+        rating="test1"
+    )
+    comment2 = Comment(
+        uid="test1",
+        restaurant="test2",
+        rating="test1"
+    )
+    comment3 = Comment(
+        uid="test1",
+        restaurant="test2",
+        rating="test1"
+    )
+    comment4 = Comment(
+        uid="test1",
+        restaurant="test2",
+        rating="test1"
+    )
+    comments=[comment1,comment2,comment3,comment4]
+    for comment in comments:
+        try:
+            comment.create()
+        except IntegrityError:
+            db.session.remove()
+            print("Error")
