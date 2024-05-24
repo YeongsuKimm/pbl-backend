@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # Define the Recipe class to manage actions in 'recipes' table
+
 class Recipe(db.Model):
     __tablename__ = "recipes"
     id = db.Column(db.Integer, primary_key=True)
@@ -20,15 +21,17 @@ class Recipe(db.Model):
     _instruction = db.Column(db.String(255), nullable=False)
     _supplies = db.Column(db.String(255), nullable=False)
     _ingredients = db.Column(db.String(255), nullable=False)
-    _thumbnail = db.Column(db.String(255), nullable=True)  # Adding the thumbnail attribute
+    _thumbnail = db.Column(db.String(255), nullable=True)
+    _likes = db.Column(db.Integer, default=0)
 
-    def __init__(self, userid, name, instruction, supplies, ingredients, thumbnail=None):
+    def __init__(self, userid, name, instruction, supplies, ingredients, thumbnail=None, likes=0):
         self._userid = userid
         self._name = name
         self._instruction = instruction
         self._supplies = supplies
         self._ingredients = ingredients
         self._thumbnail = thumbnail
+        self._likes = likes
 
     @property
     def userid(self):
@@ -77,6 +80,17 @@ class Recipe(db.Model):
     @thumbnail.setter
     def thumbnail(self, thumbnail):
         self._thumbnail = thumbnail
+    @property
+    def likes(self):
+        return self._likes
+
+    @likes.setter
+    def likes(self, value):
+        self._likes = value
+
+    def like(self):
+        self._likes += 1
+        db.session.commit()
 
     def create(self):
         try:
@@ -84,7 +98,7 @@ class Recipe(db.Model):
             db.session.commit()
             return self
         except IntegrityError:
-            db.session.remove()
+            db.session.rollback()
             return None
 
     def read(self):
@@ -95,9 +109,9 @@ class Recipe(db.Model):
             "instruction": self.instruction,
             "supplies": self.supplies,
             "ingredients": self.ingredients,
-            "thumbnail": self.thumbnail,  # Adding thumbnail to the read method
+            "thumbnail": self.thumbnail,
+            "likes": self.likes
         }
-
 
 # Database Creation and Testing
 def initRecipes():
@@ -109,7 +123,8 @@ def initRecipes():
             instruction='Layer lasagna sheets with ricotta cheese, marinara sauce, and ground beef. Repeat layers and top with mozzarella cheese. Bake in the oven until bubbly and golden.',
             supplies='Baking dish, mixing bowls, spatula, pot',
             ingredients='1 package lasagna sheets, 2 cups ricotta cheese, 2 cups marinara sauce, 1 pound ground beef, 2 cups shredded mozzarella cheese',
-            thumbnail='https://thecozycook.com/wp-content/uploads/2022/04/Lasagna-Recipe.jpg'
+            thumbnail='https://thecozycook.com/wp-content/uploads/2022/04/Lasagna-Recipe.jpg',
+            likes=4  # Initial likes count
         )
         recipe2 = Recipe(
             userid="Gordon Ramsey",
@@ -117,7 +132,8 @@ def initRecipes():
             instruction='Slow-cook pork shoulder with BBQ sauce until tender. Shred the pork and serve on sandwich buns with coleslaw.',
             supplies='Slow cooker, tongs, serving platter',
             ingredients='Pork shoulder, BBQ sauce, sandwich buns, coleslaw',
-            thumbnail='https://www.thespeckledpalate.com/wp-content/uploads/2023/07/The-Speckled-Palate-BBQ-Pulled-Pork-Sandwiches-Photo-1365x2048.jpg'
+            thumbnail='https://www.thespeckledpalate.com/wp-content/uploads/2023/07/The-Speckled-Palate-BBQ-Pulled-Pork-Sandwiches-Photo-1365x2048.jpg',
+            likes=12  # Initial likes count
         )
         recipe3 = Recipe(
             userid="Flopper",
@@ -125,7 +141,8 @@ def initRecipes():
             instruction='Cook fettuccine pasta until al dente. Sauté chicken breast slices in butter. Toss cooked pasta with Alfredo sauce and chicken. Serve with grated Parmesan cheese.',
             supplies='Pot, skillet, colander, mixing bowls, spatula',
             ingredients='Fettuccine pasta, chicken breast, butter, Alfredo sauce, Parmesan cheese',
-            thumbnail='https://thecozycook.com/wp-content/uploads/2022/08/Chicken-Alfredo-Pasta-1.jpg'
+            thumbnail='https://thecozycook.com/wp-content/uploads/2022/08/Chicken-Alfredo-Pasta-1.jpg',
+            likes=85 # Initial likes count
         )
         recipe4 = Recipe(
             userid="Tony Stark",
@@ -133,7 +150,8 @@ def initRecipes():
             instruction='Marinate salmon fillets in teriyaki sauce. Grill or bake until cooked through. Serve with steamed rice and stir-fried vegetables.',
             supplies='Grill pan or baking dish, serving platter, pot, spatula',
             ingredients='Salmon fillets, teriyaki sauce, steamed rice, assorted vegetables',
-            thumbnail='https://natashaskitchen.com/wp-content/uploads/2016/01/Teriyaki-Salmon-Recipe-4.jpg'
+            thumbnail='https://natashaskitchen.com/wp-content/uploads/2016/01/Teriyaki-Salmon-Recipe-4.jpg',
+            likes=50  # Initial likes count
         )
         recipe5 = Recipe(
             userid="Mickey Mouse",
@@ -141,7 +159,8 @@ def initRecipes():
             instruction='Stir-fry mixed vegetables (such as bell peppers, broccoli, carrots) in a hot pan with soy sauce and ginger. Serve over cooked rice or noodles.',
             supplies='Wok or skillet, spatula, serving dish',
             ingredients='Assorted vegetables (bell peppers, broccoli, carrots), soy sauce, ginger, rice or noodles',
-            thumbnail='https://natashaskitchen.com/wp-content/uploads/2020/08/Vegetable-Stir-Fry-2.jpg'
+            thumbnail='https://natashaskitchen.com/wp-content/uploads/2020/08/Vegetable-Stir-Fry-2.jpg',
+            likes=1034  # Initial likes count
         )
         
         recipes = [recipe1, recipe2, recipe3, recipe4, recipe5]
