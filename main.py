@@ -19,13 +19,15 @@ from api.recipe import recipe_api
 from api.college import college_api
 
 #initializers
+from model.users import initVideos
 from model.users import initUsers
-from model.videos import initVideos
 from model.tips import initTips1
 from model.tips2 import initTips2
 from model.titanic import initTitanic
 from model.colleges import initColleges
 from model.recipe import initRecipes
+from model.comments import initComments
+
 
 # setup App pages
 from projects.projects import app_projects
@@ -46,6 +48,7 @@ app.register_blueprint(titanic_api)
 app.register_blueprint(comments_api)
 app.register_blueprint(cancer_api)
 app.register_blueprint(happiness_api)
+app.register_blueprint(comment_api)
 
 # register app projects
 app.register_blueprint(app_projects)
@@ -89,6 +92,7 @@ def generate_data():
     initTitanic()
     initColleges()
     initRecipes()
+    # initComments()
 
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)

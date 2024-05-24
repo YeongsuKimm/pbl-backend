@@ -4,7 +4,7 @@ import json
 
 # Define the Comment class to manage actions in the 'comments' table
 class Comment(db.Model):
-    __tablename__ = 'comments' 
+    __tablename__ = 'restaurantComments' 
 
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.String(255), nullable=False)

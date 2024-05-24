@@ -1,262 +1,262 @@
-""" database dependencies to support sqliteDB examples """
-from random import randrange
-from datetime import date
-import os, base64
-import json
+# """ database dependencies to support sqliteDB examples """
+# from random import randrange
+# from datetime import date
+# import os, base64
+# import json
 
-from __init__ import app, db
-from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
-
-
-""" Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along """
+# from __init__ import app, db
+# from sqlalchemy.exc import IntegrityError
+# from werkzeug.security import generate_password_hash, check_password_hash
 
 
-# Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
-class Vid(db.Model):
-    __tablename__ = "videos"
-    id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), unique=False, nullable=False)
-    _description = db.Column(db.String(255), nullable=False)
-    _views = db.Column(db.Integer, nullable=False)
-    _video = db.Column(db.String(255), unique=False, nullable = False)
-    _thumbnail = db.Column(db.String, unique=False)
-    _videoID = db.Column(db.Integer, unique=True, nullable=True)
-    _userID = db.Column(db.String(255), nullable=False)
-    _genre = db.Column(db.String(255), unique=False, nullable=False)
-    _likes = db.Column(db.Integer, nullable=False)
-    _dislikes = db.Column(db.Integer, nullable=False)
-    # Define the Notes schema
-    # Constructor of a Notes object, initializes of instance variables within object
-        # a name getter method, extracts name from object
-    def __init__(self, name, description, views, video, thumbnail, userID, genre=""):
-        self._name = name
-        self._description = description
-        self._views = views
-        self._video = video
-        self._thumbnail = thumbnail
-        self._userID= userID
-        self._genre = genre
-        self._videoID = None
-        self._likes = 0
-        self._dislikes = 0
+# """ Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along """
 
-    @property
-    def name(self):
-        return self._name
+
+# # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
+# class Vid(db.Model):
+#     __tablename__ = "videos"
+#     id = db.Column(db.Integer, primary_key=True)
+#     _name = db.Column(db.String(255), unique=False, nullable=False)
+#     _description = db.Column(db.String(255), nullable=False)
+#     _views = db.Column(db.Integer, nullable=False)
+#     _video = db.Column(db.String(255), unique=False, nullable = False)
+#     _thumbnail = db.Column(db.String, unique=False)
+#     _videoID = db.Column(db.Integer, unique=True, nullable=True)
+#     _userID = db.Column(db.String(255), nullable=False)
+#     _genre = db.Column(db.String(255), unique=False, nullable=False)
+#     _likes = db.Column(db.Integer, nullable=False)
+#     _dislikes = db.Column(db.Integer, nullable=False)
+#     # Define the Notes schema
+#     # Constructor of a Notes object, initializes of instance variables within object
+#         # a name getter method, extracts name from object
+#     def __init__(self, name, description, views, video, thumbnail, userID, genre=""):
+#         self._name = name
+#         self._description = description
+#         self._views = views
+#         self._video = video
+#         self._thumbnail = thumbnail
+#         self._userID= userID
+#         self._genre = genre
+#         self._videoID = None
+#         self._likes = 0
+#         self._dislikes = 0
+
+#     @property
+#     def name(self):
+#         return self._name
     
-    # a setter function, allows name to be updated after initial object creation
-    @name.setter
-    def name(self, name):
-        self._name = name
+#     # a setter function, allows name to be updated after initial object creation
+#     @name.setter
+#     def name(self, name):
+#         self._name = name
     
-    # a getter method, extracts email from object
-    @property
-    def description(self):
-        return self._description
+#     # a getter method, extracts email from object
+#     @property
+#     def description(self):
+#         return self._description
     
-    # a setter function, allows name to be updated after initial object creation
-    @description.setter
-    def description(self, description):
-        self.description = description
+#     # a setter function, allows name to be updated after initial object creation
+#     @description.setter
+#     def description(self, description):
+#         self.description = description
     
-    @property
-    def views(self):
-        return self._views
+#     @property
+#     def views(self):
+#         return self._views
     
-    @views.setter
-    def views(self, views):
-        self._views = views
+#     @views.setter
+#     def views(self, views):
+#         self._views = views
 
-    @property 
-    def likes(self):
-        return self._likes
+#     @property 
+#     def likes(self):
+#         return self._likes
     
-    @likes.setter
-    def likes(self, likes):
-        self._likes = likes
+#     @likes.setter
+#     def likes(self, likes):
+#         self._likes = likes
         
-    @property
-    def dislikes(self):
-        return self._dislikes
+#     @property
+#     def dislikes(self):
+#         return self._dislikes
     
-    @dislikes.setter
-    def dislikes(self, dislikes):
-        self._dislikes = dislikes    
+#     @dislikes.setter
+#     def dislikes(self, dislikes):
+#         self._dislikes = dislikes    
     
-    @property
-    def video(self):
-        return self._video
+#     @property
+#     def video(self):
+#         return self._video
     
-    @video.setter
-    def video(self, video):
-        self._video = video
+#     @video.setter
+#     def video(self, video):
+#         self._video = video
     
-    @property
-    def thumbnail(self):
-        return self._thumbnail
+#     @property
+#     def thumbnail(self):
+#         return self._thumbnail
     
-    @thumbnail.setter
-    def thumbnail(self, thumbnail):
-        self._thumbnail = thumbnail
+#     @thumbnail.setter
+#     def thumbnail(self, thumbnail):
+#         self._thumbnail = thumbnail
 
-    @property
-    def videoID(self):
-        return self._videoID
+#     @property
+#     def videoID(self):
+#         return self._videoID
     
-    @videoID.setter
-    def videoID(self, videoID):
-        self._videoID = videoID
+#     @videoID.setter
+#     def videoID(self, videoID):
+#         self._videoID = videoID
 
-    @property
-    def userID(self):
-        return self._userID
+#     @property
+#     def userID(self):
+#         return self._userID
     
-    @userID.setter
-    def userID(self, userID):
-        self._userID = userID
+#     @userID.setter
+#     def userID(self, userID):
+#         self._userID = userID
         
-    @property
-    def genre(self):
-        return self._genre
+#     @property
+#     def genre(self):
+#         return self._genre
     
-    @genre.setter
-    def genre(self, genre):
-        self._genre = genre
+#     @genre.setter
+#     def genre(self, genre):
+#         self._genre = genre
 
-    # Returns a string representation of the Notes object, similar to java toString()
-    # returns string
+#     # Returns a string representation of the Notes object, similar to java toString()
+#     # returns string
 
-    # CRUD create, adds a new record to the Notes table
-    # returns the object added or None in case of an error
-    def create(self, base64_encoded):
-        try:
-            path = app.config['UPLOAD_FOLDER']
-            file_decode = base64.b64decode(base64_encoded)
-            db.session.add(self)  # Add prepares to persist the Vid object to the 'videos' table
-            db.session.commit()  # Commit the changes to the database
+#     # CRUD create, adds a new record to the Notes table
+#     # returns the object added or None in case of an error
+#     def create(self, base64_encoded):
+#         try:
+#             path = app.config['UPLOAD_FOLDER']
+#             file_decode = base64.b64decode(base64_encoded)
+#             db.session.add(self)  # Add prepares to persist the Vid object to the 'videos' table
+#             db.session.commit()  # Commit the changes to the database
 
-            # After committing, the self.id should be populated with the primary key value generated by the database
-            self._videoID = self.id
-            self._thumbnail = str(self.id) + str(self._thumbnail)
-            output_file_path = os.path.join(path, str(self._thumbnail))
-            with open(output_file_path, 'wb') as output_file:
-                output_file.write(file_decode)
+#             # After committing, the self.id should be populated with the primary key value generated by the database
+#             self._videoID = self.id
+#             self._thumbnail = str(self.id) + str(self._thumbnail)
+#             output_file_path = os.path.join(path, str(self._thumbnail))
+#             with open(output_file_path, 'wb') as output_file:
+#                 output_file.write(file_decode)
 
-            # Commit again to ensure the changes to _videoID are saved
-            db.session.commit()
+#             # Commit again to ensure the changes to _videoID are saved
+#             db.session.commit()
 
-            return self
-        except IntegrityError:
-            db.session.rollback()  # Rollback the session to the previous state
-            return None
+#             return self
+#         except IntegrityError:
+#             db.session.rollback()  # Rollback the session to the previous state
+#             return None
 
-    # CRUD read, returns dictionary representation of Notes object
-    # returns dictionary
-    def read(self):
-        try:
-            path = app.config['UPLOAD_FOLDER']
-            file = os.path.join(path, self._thumbnail)
-            file_text = open(file, 'rb')
-            file_read = file_text.read()
-            file_encode = base64.encodebytes(file_read)
-            return {
-                "id": self.id,
-                "name": self.name,
-                "description": self.description,
-                "views": self.views,
-                "video": "http://127.0.0.1:8069/videos/" + self.video,
-                "thumbnail": self._thumbnail,
-                "base64": str(file_encode),
-                "videoID": self.videoID,
-                "userID": self.userID,
-                "genre": self.genre,
-                "likes": self.likes,
-                "dislikes": self.dislikes
-            }
-        except:
-            return {
-                "id": self.id,
-                "name": self.name,
-                "description": self.description,
-                "views": self.views,
-                "video": "http://127.0.0.1:8069/videos/" + self.video,
-                "thumbnail": "",
-                "base64": "",
-                "videoID": self.videoID,
-                "userID": self.userID,
-                "genre": self.genre,
-                "likes": self.likes,
-                "dislikes": self.dislikes
-            }
-    def put(self):
-        try:
-            self._views += 1
-            db.session.commit()
-            return self
-        except:
-            return None
+#     # CRUD read, returns dictionary representation of Notes object
+#     # returns dictionary
+#     def read(self):
+#         try:
+#             path = app.config['UPLOAD_FOLDER']
+#             file = os.path.join(path, self._thumbnail)
+#             file_text = open(file, 'rb')
+#             file_read = file_text.read()
+#             file_encode = base64.encodebytes(file_read)
+#             return {
+#                 "id": self.id,
+#                 "name": self.name,
+#                 "description": self.description,
+#                 "views": self.views,
+#                 "video": "http://127.0.0.1:8069/videos/" + self.video,
+#                 "thumbnail": self._thumbnail,
+#                 "base64": str(file_encode),
+#                 "videoID": self.videoID,
+#                 "userID": self.userID,
+#                 "genre": self.genre,
+#                 "likes": self.likes,
+#                 "dislikes": self.dislikes
+#             }
+#         except:
+#             return {
+#                 "id": self.id,
+#                 "name": self.name,
+#                 "description": self.description,
+#                 "views": self.views,
+#                 "video": "http://127.0.0.1:8069/videos/" + self.video,
+#                 "thumbnail": "",
+#                 "base64": "",
+#                 "videoID": self.videoID,
+#                 "userID": self.userID,
+#                 "genre": self.genre,
+#                 "likes": self.likes,
+#                 "dislikes": self.dislikes
+#             }
+#     def put(self):
+#         try:
+#             self._views += 1
+#             db.session.commit()
+#             return self
+#         except:
+#             return None
     
-    def like(self):
-        try:
-            self._likes += 1
-            db.session.commit()
-            return self
-        except: 
-            return None
+#     def like(self):
+#         try:
+#             self._likes += 1
+#             db.session.commit()
+#             return self
+#         except: 
+#             return None
     
-    def dislike(self):
-        try:
-            self._dislikes += 1
-            db.session.commit()
-            return self
-        except: 
-            return None
+#     def dislike(self):
+#         try:
+#             self._dislikes += 1
+#             db.session.commit()
+#             return self
+#         except: 
+#             return None
     
-def initVideos():
-    with app.app_context():
-        """Create database and tables"""
-        db.create_all()
-        """Tester records for table"""
-        video1 = Vid(
-            name='Napoleon Bonaparte Edit 1', 
-            description="Napoleon the GOAT, omg I love him he's my glorious KING", 
-            thumbnail="napoleonbonaparte.jpg", 
-            views=0, 
-            video="napoleon-bonaparte.mp4", 
-            userID="advikg",
-            genre="music"
-        )
-        video2 = Vid(
-            name=' Cisco Kaisen', 
-            description="He didn't know his TTL had reached zero.", 
-            thumbnail="paul-kaisen.jpg", 
-            views=0, 
-            video="test.mp4", 
-            userID="advikg",
-            genre="music"
-        )
+# def initVideos():
+#     with app.app_context():
+#         """Create database and tables"""
+#         db.create_all()
+#         """Tester records for table"""
+#         video1 = Vid(
+#             name='Napoleon Bonaparte Edit 1', 
+#             description="Napoleon the GOAT, omg I love him he's my glorious KING", 
+#             thumbnail="napoleonbonaparte.jpg", 
+#             views=0, 
+#             video="napoleon-bonaparte.mp4", 
+#             userID="advikg",
+#             genre="music"
+#         )
+#         video2 = Vid(
+#             name=' Cisco Kaisen', 
+#             description="He didn't know his TTL had reached zero.", 
+#             thumbnail="paul-kaisen.jpg", 
+#             views=0, 
+#             video="test.mp4", 
+#             userID="advikg",
+#             genre="music"
+#         )
 
 
-        # video2 = Vid(
+#         # video2 = Vid(
                 
-        # )
+#         # )
         
-        videos = [video1, video2] 
-        # videos = []
-        # videos = [video1, video2, video3, video4, video5, video6, video7]
+#         videos = [video1, video2] 
+#         # videos = []
+#         # videos = [video1, video2, video3, video4, video5, video6, video7]
 
-        """Builds sample user/note(s) data"""
-        vid_id = 0
-        for vid in videos:
-            try:
-                path = app.config['UPLOAD_FOLDER']
-                file = os.path.join(path, vid.thumbnail)
-                file_text = open(file, 'rb')
-                file_read = file_text.read()
-                file_encode = base64.encodebytes(file_read)
-                vid.create(file_encode)
-            except IntegrityError:
-                '''fails with bad or duplicate data'''
-                db.session.remove()
-                print(f"Records exist, duplicate email, or error: {vid.vid}")
+#         """Builds sample user/note(s) data"""
+#         vid_id = 0
+#         for vid in videos:
+#             try:
+#                 path = app.config['UPLOAD_FOLDER']
+#                 file = os.path.join(path, vid.thumbnail)
+#                 file_text = open(file, 'rb')
+#                 file_read = file_text.read()
+#                 file_encode = base64.encodebytes(file_read)
+#                 vid.create(file_encode)
+#             except IntegrityError:
+#                 '''fails with bad or duplicate data'''
+#                 db.session.remove()
+#                 print(f"Records exist, duplicate email, or error: {vid.vid}")

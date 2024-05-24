@@ -5,8 +5,9 @@ from datetime import datetime
 from auth_middleware import token_required
 import os
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from model.videos import Vid
+from model.users import Vid
 from model.users import User
+import time
 
 
 video_api = Blueprint('video_api', __name__, url_prefix='/api/video')
@@ -17,16 +18,24 @@ api = Api(video_api)
 class VideoAPI:        
     class _CRUD(Resource):  # User API operation for Create, Read.  THe Update, Delete methods need to be implemeented
         def put(self):
+            '''
+            (Params) Body:
+                - Video Type (for likes and dislikes)
+                - videoID
+            1. Query the Video metadata with the corresponding video ID
+            2. If the type is set to 0, then run the PUT function in the model to increase the amount of views
+            3. If the type is set to 1, then increase the likes by 1
+            4. If the type is set to 2, then increase the dislikes by 1
+            '''
             body = request.get_json()
             type = int(body.get('type'))
             videoID = int(body.get('videoID'))
-            if videoID is None:
-                return {'message': f'Video ID is missing'}, 400
+            userID = str(body.get('userID'))
             video = Vid.query.filter_by(_videoID=videoID).first()
             if video:
                 if type == 0:
                     try:
-                        put_req = video.put()
+                        put_req = video.put(userID)
                         return jsonify(video.read())
                     except Exception as e:
                         return {
@@ -35,7 +44,10 @@ class VideoAPI:
                         }, 500
                 elif type == 1:
                     try:
-                        put_req = video.like()
+                        print(userID)
+                        if userID == "None":
+                            return {'message': f'You must be logged in to like the video'}, 401
+                        put_req = video.like(userID)
                         return jsonify(video.read())
                     except Exception as e:
                         return {
@@ -44,7 +56,9 @@ class VideoAPI:
                         }, 500
                 elif type == 2:
                     try:
-                        put_req = video.dislike()
+                        if userID == "None":
+                            return {'message': f"You must be logged in to dislike the video"}, 401
+                        put_req = video.dislike(userID)
                         return jsonify(video.read())
                     except Exception as e:
                         return {
@@ -55,10 +69,18 @@ class VideoAPI:
                 
         @token_required
         def post(self, current_user): # Create method
-            ''' Read data for json body '''
+            ''' 
+            Params: 
+                - current_user
+            - Body of the JSON
+                - base64, description, name, userID, thumbnail name, genre
+            
+            1. Create a python object based on the paramters 
+            2. Create the image with the Create method and ready to go for the video
+            3. Once created return the JSON of what the new uploaded JSON looks like              
+            '''
             if request.is_json:
                 body = request.get_json()
-                ''' Avoid garbage in, error checking '''
                 name = body.get('name')
                 if name is None:
                     return {'message': f'name is missing, or is less than 2 characters'}, 400
@@ -115,54 +137,109 @@ class VideoAPI:
             return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
         
     class _ReadVID(Resource):
+        '''
+        params:
+            - Resource: <int:vid> so it takes any resources at /api/video/<vid>
+        
+        get method:
+            - Queries the Video database to find ALL the data paramters in a jsonified format and returns it:
+            EXAMPLE:    
+                /api/video/0 - returns:
+                (JSON) - 
+                {
+                    base64,
+                    description, 
+                    dislikes, 
+                    genre,
+                    id,
+                    likes,
+                    name,
+                    thumbnail,
+                    userID
+                    video,
+                    videoID,
+                    views
+                    }
+            
+        '''
+
         def get(self, vid):
             video = Vid.query.filter_by(_videoID=vid).first()
             data = video.read()
             return jsonify(data)
         
-        # def put(self,)
 
     class _Recommend(Resource):
         def get(self, uid):
-            # Get user preferences
-            user = User.query.filter_by(_uid=uid).first()
-            if user is None:
-                return jsonify({"message": "User not found"}), 404
+            '''
+            1. Find who the user is based on the UID
+            2. Find what preference of videos the user likes watching
+            3. Query all the different videos
+            4. For every video find all video genres matching the user's preference
+            5. Show the matching videos based on the MOST views and the MOST like to dislike ratio.
+            6. Return the Data as JSON 
+            '''
+            try:
+                start = time.time()
+                print("hello")
+                user = User.query.filter_by(_uid=uid).first()
+                if user is None:
+                    user_preferences = None
+                else:
+                    user_preferences = user.preferences
+                    
+                
+                # Get all videos
+                videos = Vid.query.all()
+
+                # Filter videos based on matching genres
+                matching_videos = []
+                unmatching_videos = []
+                for video in videos:
+                    if user_preferences == video.genre:
+                        matching_videos.append(video)
+                    else:
+                        unmatching_videos.append(video)                
+                end = time.time()
+                print("Time elapsed : " + str(abs((end - start)*1000)) + "ms")
+            except Exception:
+                unmatching_videos = Vid.query.all()
+                matching_videos = []
+
+            # Assuming both `matching_videos` and `unmatching_videos` are lists of objects with `likes` and `dislikes` attributes
+
             
-            user_preferences = user.preferences
+            
+            def sort_videos_by_views_and_difference(videos):
+                sorted_videos = []
+                for i in range(len(videos)):
+                    min_index = i
+                    for j in range(i + 1, len(videos)):
+                        # Compare primary key (views)
+                        if videos[j].views < videos[min_index].views:
+                            min_index = j
+                        elif videos[j].views == videos[min_index].views:
+                            # If the primary key (views) is equal, compare secondary key (difference between likes and dislikes)
+                            current_difference = videos[j].likes - videos[j].dislikes
+                            min_difference = videos[min_index].likes - videos[min_index].dislikes
+                            if current_difference < min_difference:
+                                min_index = j
 
-            # Get all videos
-            videos = Vid.query.all()
+                    # Swap the found minimum element with the first element
+                    videos[i], videos[min_index] = videos[min_index], videos[i]
+                    sorted_videos.insert(0, videos[i])
+                
+                return sorted_videos
 
-            # Separate videos into matching and unmatching genres
-            matching_videos = []
-            unmatching_videos = []
-            for video in videos:
-                if any(pref in video.genre for pref in user_preferences):
-                    matching_videos.append(video)
-                else:
-                    unmatching_videos.append(video)
+            sorted_matching_videos = sort_videos_by_views_and_difference(matching_videos)
+            sorted_unmatching_videos = sort_videos_by_views_and_difference(unmatching_videos)
 
-            # Calculate like to dislike ratio for matching videos
-            for video in matching_videos:
-                if video.dislikes != 0:
-                    video.like_to_dislike_ratio = video.likes / video.dislikes
-                else:
-                    video.like_to_dislike_ratio = video.likes
 
-            # Sort matching videos based on genre match, then by like to dislike ratio
-            sorted_matching_videos = sorted(matching_videos, key=lambda x: (user_preferences.index(next(pref for pref in user_preferences if pref in x.genre)), x.like_to_dislike_ratio), reverse=True)
-
-            # Sort unmatching videos based on views count
-            sorted_unmatching_videos = sorted(unmatching_videos, key=lambda x: x.views, reverse=True)
-
-            # Concatenate sorted matching and unmatching videos
             sorted_videos = sorted_matching_videos + sorted_unmatching_videos
-
+        
             # Prepare JSON response
             json_ready = [video.read() for video in sorted_videos]
             return jsonify(json_ready)
-
 
     
     api.add_resource(_CRUD, '/')

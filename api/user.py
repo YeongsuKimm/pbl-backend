@@ -1,5 +1,5 @@
 import json, jwt
-from flask import Blueprint, request, jsonify, current_app, Response, make_response
+from flask import Blueprint, request, jsonify, current_app, Response
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 from auth_middleware import token_required
@@ -11,7 +11,9 @@ user_api = Blueprint('user_api', __name__,
 
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(user_api)
-
+'''
+Most of this was just a template that I used, I added some stuff like account deletion
+'''
 class UserAPI:        
     class _CRUD(Resource):  # User API operation for Create, Read.  THe Update, Delete methods need to be implemeented
         def post(self): # Create method
@@ -63,7 +65,7 @@ class UserAPI:
         def get(self, current_user): # Read Method
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
-            return make_response(jsonify(json_ready), 200)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+            return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
         
 
     class _Update(Resource):
@@ -89,6 +91,7 @@ class UserAPI:
                         "message": str(e)
                     }, 500
         def delete(self):
+            '''done by me'''
             body = request.get_json()
             uid = body.get('uid')
             user = User.query.filter_by(_uid=uid).first()
@@ -160,8 +163,61 @@ class UserAPI:
                         "data": None
                 }, 500
 
+    class _Playlist(Resource):
+        def get(self): # Read Method
+            users = User.query.all()    # read/extract all users from database
+            json_ready = [user.read() for user in users]  # prepare output in json
+            return jsonify(json_ready) 
             
+        def post(self):
+            body = request.get_json()
+            uid = body.get('uid')
+            name = body.get('name')
+            users = User.query.all()
+            usr = -1
+            for user in users:
+                if(user.read()["uid"] == uid):
+                    usr = user
+            if(usr == -1):
+                print("user doesn't exist")
+                return {
+                    "message": "User doesn't exist"
+                }
+            if(name in list(usr.read()["playlists"].keys())):
+                print("playlist already exists")
+                return {
+                    "message": "Playlist already exists"
+                }
+            else:
+                usr.createPlaylist(name)
+                return jsonify(usr.read())
+        
+        def put(self):
+            body = request.get_json()
+            uid = body.get('uid')
+            name = body.get('name')
+            vidID = body.get('vidID')
+            users = User.query.all()
+            usr = -1
+            for user in users:
+                if(user.read()["uid"] == uid):
+                    usr = user
+            if(usr == -1):
+                print("user doesn't exist")
+                return {
+                    "message": "User doesn't exist"
+                }
+            if(vidID in usr.read()["playlists"][name]):
+                print("video already exists in playlist")
+                return {
+                    "message": "Video already exists"
+                }
+            else:
+                usr.updatePlaylist(name, int(vidID))
+                return jsonify(usr.read())
+        
     # building RESTapi endpoint
     api.add_resource(_CRUD, '/')
     api.add_resource(_Security, '/authenticate')
     api.add_resource(_Update, '/update')
+    api.add_resource(_Playlist, '/playlist')
