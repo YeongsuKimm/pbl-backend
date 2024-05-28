@@ -1,6 +1,6 @@
 import json
 import logging  # Import logging module for debugging
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
 from auth_middleware import token_required  # Middleware for handling token authentication
 from model.recipe import Recipe  # Importing the Recipe class from the model module
@@ -24,7 +24,7 @@ class RecipeAPI:
                     
                     recipe.likes += 1
                     recipe.update()  # Assuming there's an update method in Recipe class
-                    return jsonify({'message': 'Recipe liked successfully', 'recipe_likes': recipe.likes}), 200
+                    return make_response({'message': 'Recipe liked successfully', 'recipe_likes': recipe.likes}), 200
                 except Exception as e:
                     logging.error(f"Error liking recipe: {e}")  # Log error
                     return {'message': f'Failed to like recipe: {str(e)}'}, 500
@@ -53,7 +53,7 @@ class RecipeAPI:
 
                     # Checking if the recipe was successfully saved and returning the result
                     if ro:
-                        return jsonify(ro.read())
+                        return make_response(ro.read())
                     return {'message': 'Failed to upload recipe'}, 500
 
                 else:
