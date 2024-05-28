@@ -1,6 +1,6 @@
 import json
 import logging  # Import logging module for debugging
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from auth_middleware import token_required  # Middleware for handling token authentication
 from model.recipe import Recipe  # Importing the Recipe class from the model module
@@ -24,7 +24,7 @@ class RecipeAPI:
                     
                     recipe.likes += 1
                     recipe.update()  # Assuming there's an update method in Recipe class
-                    return make_response({'message': 'Recipe liked successfully', 'recipe_likes': recipe.likes}), 200
+                    return jsonify({'message': 'Recipe liked successfully', 'recipe_likes': recipe.likes}), 200
                 except Exception as e:
                     logging.error(f"Error liking recipe: {e}")  # Log error
                     return {'message': f'Failed to like recipe: {str(e)}'}, 500
@@ -37,6 +37,7 @@ class RecipeAPI:
                     recipe_instructions = data.get('recipeInstructions')
                     recipe_ingredients = data.get('recipeIngredients')
                     recommended_supplies = data.get('recommendedSupplies')
+                    thumbnail = data.get('thumbnail')  # Extracting thumbnail from JSON data
                     userid = data.get('userid')  # Extracting userid from JSON data
 
                     # Creating a new Recipe object with the extracted data
@@ -46,6 +47,7 @@ class RecipeAPI:
                         instruction=recipe_instructions,
                         ingredients=recipe_ingredients,
                         supplies=recommended_supplies,
+                        thumbnail=thumbnail
                     )
 
                     # Attempting to save the new recipe object to the database
@@ -53,7 +55,7 @@ class RecipeAPI:
 
                     # Checking if the recipe was successfully saved and returning the result
                     if ro:
-                        return make_response(ro.read())
+                        return jsonify(ro.read())
                     return {'message': 'Failed to upload recipe'}, 500
 
                 else:
