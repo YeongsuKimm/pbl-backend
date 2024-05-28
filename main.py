@@ -12,7 +12,7 @@ from api.video import video_api
 # from api.stroke import stroke_api
 # from api.tips import tips_api
 # from api.titanic import titanic_api
-from api.comments import comments_api
+from api.comment import comment_api
 # from api.cancer import cancer_api
 # from api.happy import happiness_api
 from api.recipe import recipe_api
@@ -45,7 +45,7 @@ app.register_blueprint(college_api)
 # register URIs - ML Projects
 # app.register_blueprint(tips_api)
 # app.register_blueprint(titanic_api) 
-app.register_blueprint(comments_api)
+app.register_blueprint(comment_api)
 # app.register_blueprint(cancer_api)
 # app.register_blueprint(happiness_api)
 
