@@ -8,7 +8,6 @@ from __init__ import db, app
 
 comments_api = Blueprint('comments_api', __name__, url_prefix='/api/comments')
 api = Api(comments_api)
-db.init_app(app)
 
 class CommentAPI(Resource):
     def get(self):
