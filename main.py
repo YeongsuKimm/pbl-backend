@@ -9,21 +9,21 @@ from __init__ import app, db, cors
 # setup APIs
 from api.user import user_api
 from api.video import video_api
-from api.stroke import stroke_api
-from api.tips import tips_api
-from api.titanic import titanic_api
+# from api.stroke import stroke_api
+# from api.tips import tips_api
+# from api.titanic import titanic_api
 from api.comments import comments_api
-from api.cancer import cancer_api
-from api.happy import happiness_api
+# from api.cancer import cancer_api
+# from api.happy import happiness_api
 from api.recipe import recipe_api
 from api.college import college_api
 
 #initializers
 from model.users import initVideos
 from model.users import initUsers
-from model.tips import initTips1
-from model.tips2 import initTips2
-from model.titanic import initTitanic
+# from model.tips import initTips1
+# from model.tips2 import initTips2
+# from model.titanic import initTitanic
 from model.colleges import initColleges
 from model.recipe import initRecipes
 from model.comments import initComments
@@ -38,16 +38,16 @@ db.init_app(app)
 # register URIs - CPT Projects
 app.register_blueprint(user_api) # register api routes
 app.register_blueprint(video_api)
-app.register_blueprint(stroke_api)
+# app.register_blueprint(stroke_api)
 app.register_blueprint(recipe_api)
 app.register_blueprint(college_api)
 
 # register URIs - ML Projects
-app.register_blueprint(tips_api)
-app.register_blueprint(titanic_api) 
+# app.register_blueprint(tips_api)
+# app.register_blueprint(titanic_api) 
 app.register_blueprint(comments_api)
-app.register_blueprint(cancer_api)
-app.register_blueprint(happiness_api)
+# app.register_blueprint(cancer_api)
+# app.register_blueprint(happiness_api)
 
 # register app projects
 app.register_blueprint(app_projects)
@@ -86,9 +86,9 @@ custom_cli = AppGroup('custom', help='Custom commands')
 def generate_data():
     initVideos()
     initUsers()
-    initTips1()
-    initTips2()
-    initTitanic()
+    # initTips1()
+    # initTips2()
+    # initTitanic()
     initColleges()
     initRecipes()
     # initComments()
