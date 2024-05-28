@@ -91,7 +91,7 @@ def generate_data():
     # initTitanic()
     initColleges()
     initRecipes()
-    initComments()
+    # initComments()
 
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
