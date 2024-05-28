@@ -48,7 +48,6 @@ app.register_blueprint(titanic_api)
 app.register_blueprint(comments_api)
 app.register_blueprint(cancer_api)
 app.register_blueprint(happiness_api)
-app.register_blueprint(comment_api)
 
 # register app projects
 app.register_blueprint(app_projects)
