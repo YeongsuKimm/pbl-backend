@@ -164,6 +164,11 @@ class UserAPI:
                 }, 500
 
     class _Playlist(Resource):
+        """
+        GET Request: Returns all the users in the database
+        POST Request (args: uid, playlist name): Attempts to add a new playlist to the user with the given name
+        PUT Request (args: uid, name, videoID): Adds the given videoID to the specified playlist
+        """
         def get(self): # Read Method
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
@@ -171,25 +176,25 @@ class UserAPI:
             
         def post(self):
             body = request.get_json()
-            uid = body.get('uid')
+            uid = body.get('uid') # gets the uid and the name of the playlist 
             name = body.get('name')
             users = User.query.all()
             usr = -1
-            for user in users:
+            for user in users: # searches through all the users and gets the user with the uid that created the playlist
                 if(user.read()["uid"] == uid):
                     usr = user
-            if(usr == -1):
+            if(usr == -1): # if the user doesn't exist
                 print("user doesn't exist")
                 return {
                     "message": "User doesn't exist"
                 }
-            if(name in list(usr.read()["playlists"].keys())):
+            if(name in list(usr.read()["playlists"].keys())): # if the playlist name is already one of the keys in the dictionary containing all the playlists
                 print("playlist already exists")
                 return {
                     "message": "Playlist already exists"
                 }
             else:
-                usr.createPlaylist(name)
+                usr.createPlaylist(name) #otherwise, create a new playlist with the name given
                 return jsonify(usr.read())
         
         '''
@@ -204,14 +209,14 @@ class UserAPI:
         def put(self):
             # Get the body w/ the User ID, name, Video ID
             body = request.get_json()
-            uid = body.get('uid')
+            uid = body.get('uid') # retrieves the uid, name, and the vidID from the request
             name = body.get('name')
             vidID = body.get('vidID')
             # Query all the users
 
             users = User.query.all()
             usr = -1
-            for user in users:
+            for user in users: # if user who is trying to add the video to one of their playlists exists
                 if(user.read()["uid"] == uid):
                     usr = user
 

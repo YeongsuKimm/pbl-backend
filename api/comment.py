@@ -14,15 +14,19 @@ api = Api(comment_api)
 
 class commentAPI:        
     class _ReadComment(Resource): 
+        """
+        GET Request (args: videoID): Returns all the comments that belong to a certain video
+        POST Request (args: uid, playlist name): Attempts to add a new comment to the linked to the specified video
+        """
         def get(self, vid) :
-            video = Vid.query.filter_by(_videoID=vid).first()
-            comments = Comment.query.all()
-            matchingComments = []
-            for comment in comments:
+            video = Vid.query.filter_by(_videoID=vid).first() 
+            comments = Comment.query.all() # gets all the comments from the database
+            matchingComments = [] # creates an empty list to later add matching comments (comments that belong with the specified video)
+            for comment in comments: 
                 if(comment.getVideoID() == vid):
-                    matchingComments.append(comment)
-            data = []
-            for comment in matchingComments:
+                    matchingComments.append(comment) # iterates through all the comments and adds the ones that belong with the specified video ID
+            data = [] # an empty list for response data
+            for comment in matchingComments: # adds the comments into a readable format to return as the response
                 com = {
                     "comment": comment.getComment(),
                     "user": comment.getUser()
@@ -32,15 +36,15 @@ class commentAPI:
         
         
     class _CRUD(Resource):
-        def post(self, ):
+        def post(self):
             body = request.get_json()
-            comment = body.get('comment')
+            comment = body.get('comment') # retrieves the comment and the video ID of which the commented was posted from
             videoID = body.get('videoID')
-            uid = body.get('uid')
+            uid = body.get('uid') # retrieves the user ID that posted the comment
             
-            com = Comment(comment, videoID, uid)
-            com.create()
-            return jsonify(com.read())
+            com = Comment(comment, videoID, uid) # creates a new comment instance object
+            com.create() # adds that newly created object into the database
+            return jsonify(com.read()) # returns the successfully uploaded comment
             
     api.add_resource(_CRUD, '/')
     api.add_resource(_ReadComment, '/<int:vid>')

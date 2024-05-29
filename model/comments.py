@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
-class Comment(db.Model):
+class Comment(db.Model): # each instance of Comment will have a comment body, videoID that the comment belongs to, and the user who posted it
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
     _comment = db.Column(db.String(255))
@@ -22,25 +22,25 @@ class Comment(db.Model):
         self._videoID = videoID
         self._user = user
 
-    def getComment(self):
+    def getComment(self): # getter method for comment
         return self._comment
     
-    def comment(self,comment):
+    def comment(self,comment): # setter method for comment
         self._comment = comment
         
-    def getVideoID(self):
+    def getVideoID(self):# getter method for videoID
         return self._videoID
     
-    def videoID(self,videoID):
+    def videoID(self,videoID):# setter method for videoID
         self._videoID = videoID
         
-    def getUser(self):
+    def getUser(self): # getter method for user
         return self._user
     
-    def user(self, user):
+    def user(self, user):# setter method for user
         self._user = user    
     
-    def create(self):
+    def create(self): # method to add a comment instance to the database
         try:
             db.session.add(self) 
             db.session.commit() 

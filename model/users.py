@@ -446,7 +446,7 @@ class User(db.Model):
     _password = db.Column(db.String(255), unique=False, nullable=False)
     _email = db.Column(db.String(255), unique=True, nullable=False)
     _dob = db.Column(db.Date)
-    _playlist = db.Column(MutableDict.as_mutable(JSON))
+    _playlist = db.Column(MutableDict.as_mutable(JSON)) # playlist is a JSON (essentially a dictionary) that contains playlists and and a list of video IDs for that playlist
 
 
     '''
@@ -593,15 +593,23 @@ class User(db.Model):
             # "post s": [post.read() for post in self.posts]
         }
 
-    def createPlaylist(self, name):
+        """
+        Playlists will be composed of a dictionary with the key values representing the playlist names and the values being a list of videoIDs that belong to the 
+        specified playlist.
+        To incorporate this, similar to the structure used in the JSON for ViewLikesDislikes function in videos, we used the JSON to essentially add 
+        dictionaries to the backend database. 
+        """
+
+    def createPlaylist(self, name): # creates a new playlist for the user, adds a new key to the dictionary with a value of an empty list
         self._playlist[name] = []
-        flag_modified(self, "_playlist")
+        flag_modified(self, "_playlist") #necessary line to commit changes to the database
         db.session.commit()
         return self
     
     # adds to the playlist column, name field to include the specific videoID
     # Must have the flag_modified to work
-    def updatePlaylist(self, name, videoID):
+    def updatePlaylist(self, name, videoID): # updates a playlist by adding a videoID to the list of playlists. 
+        # Gets the playlist with the given name and appends the new video id to that playlist lit
         self._playlist[name].append(videoID)
         flag_modified(self, "_playlist")
         db.session.commit()

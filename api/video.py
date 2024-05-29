@@ -183,38 +183,41 @@ class VideoAPI:
                 start = time.time()
                 print("hello")
                 user = User.query.filter_by(_uid=uid).first()
-                if user is None:
-                    user_preferences = None
+                if user is None: # if the user accessing the homepage exists (henceforth has a preference)
+                    user_preferences = None # set user_preferences to None, so user doesn't have a preference
                 else:
                     user_preferences = user.preferences
                     
                 
                 # Get all videos
-                videos = Vid.query.all()
+                videos = Vid.query.all() 
 
                 # Filter videos based on matching genres
-                matching_videos = []
+                matching_videos = [] 
                 unmatching_videos = []
-                for video in videos:
+                for video in videos: # iterates through all the videos 
                     if user_preferences == video.genre:
-                        matching_videos.append(video)
+                        matching_videos.append(video) # if the video's genre matches with the user's preference, add it to the matching list
                     else:
-                        unmatching_videos.append(video)                
+                        unmatching_videos.append(video) # otherwise add to the list of unmatching videos
                 end = time.time()
                 print("Time elapsed : " + str(abs((end - start)*1000)) + "ms")
             except Exception:
-                unmatching_videos = Vid.query.all()
+                unmatching_videos = Vid.query.all() # if error, just assume that all the videos are unmatching 
                 matching_videos = []
 
             # Assuming both `matching_videos` and `unmatching_videos` are lists of objects with `likes` and `dislikes` attributes
 
             
-            
-            def sort_videos_by_views_and_difference(videos):
-                sorted_videos = []
-                for i in range(len(videos)):
+            """
+            (args: list of videos): returns the sorted videos. the algorithm sorts the videos based on views and likes, but prioritizes views over likes
+            So, if one video has more views but less likes than another video, it will display first the videos with more views
+            """
+            def sort_videos_by_views_and_difference(videos): # because we call the functionality of this function twice, we created a function to manage complexity
+                sorted_videos = [] # will hold all the sorted videos,
+                for i in range(len(videos)): # iterates through the indices of all videos
                     min_index = i
-                    for j in range(i + 1, len(videos)):
+                    for j in range(i + 1, len(videos)): # selection sort to manage sorting by views and likes/dislikes
                         # Compare primary key (views)
                         if videos[j].views < videos[min_index].views:
                             min_index = j
@@ -231,14 +234,14 @@ class VideoAPI:
                 
                 return sorted_videos
 
-            sorted_matching_videos = sort_videos_by_views_and_difference(matching_videos)
-            sorted_unmatching_videos = sort_videos_by_views_and_difference(unmatching_videos)
+            sorted_matching_videos = sort_videos_by_views_and_difference(matching_videos) # sorts the matching videos list
+            sorted_unmatching_videos = sort_videos_by_views_and_difference(unmatching_videos) # sorts the unmatching videos list
 
 
-            sorted_videos = sorted_matching_videos + sorted_unmatching_videos
+            sorted_videos = sorted_matching_videos + sorted_unmatching_videos # adds the two sorted lists together, with the matching videos coming first
         
             # Prepare JSON response
-            json_ready = [video.read() for video in sorted_videos]
+            json_ready = [video.read() for video in sorted_videos] #returns the a JSON of all the sorted videos in order 
             return jsonify(json_ready)
 
     
