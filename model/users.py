@@ -598,7 +598,7 @@ class User(db.Model):
         flag_modified(self, "_playlist")
         db.session.commit()
         return self
-
+    # 
     def updatePlaylist(self, name, videoID):
         self._playlist[name].append(videoID)
         flag_modified(self, "_playlist")

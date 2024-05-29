@@ -192,27 +192,44 @@ class UserAPI:
                 usr.createPlaylist(name)
                 return jsonify(usr.read())
         
+        '''
+        PUT method (Takes the body request as JSON)
+            Body params -> User ID (uid), name, Video ID (vidID)
+        
+        usr = -1 is set to be a checking flag conditional
+        
+        Calls the updated playlist method with the specific user name and videoID 
+            
+        '''
         def put(self):
+            # Get the body w/ the User ID, name, Video ID
             body = request.get_json()
             uid = body.get('uid')
             name = body.get('name')
             vidID = body.get('vidID')
+            # Query all the users
+
             users = User.query.all()
             usr = -1
             for user in users:
                 if(user.read()["uid"] == uid):
                     usr = user
+
+            # Check if the user exists in the table, if it doesn't throw an error
             if(usr == -1):
                 print("user doesn't exist")
                 return {
                     "message": "User doesn't exist"
                 }
+
+            # Check in the users table, playlists column, name value if the video is in the playlist
             if(vidID in usr.read()["playlists"][name]):
                 print("video already exists in playlist")
                 return {
                     "message": "Video already exists"
                 }
             else:
+                # updatePlaylist method in the model
                 usr.updatePlaylist(name, int(vidID))
                 return jsonify(usr.read())
         
