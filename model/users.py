@@ -598,7 +598,9 @@ class User(db.Model):
         flag_modified(self, "_playlist")
         db.session.commit()
         return self
-    # 
+    
+    # adds to the playlist column, name field to include the specific videoID
+    # Must have the flag_modified to work
     def updatePlaylist(self, name, videoID):
         self._playlist[name].append(videoID)
         flag_modified(self, "_playlist")
