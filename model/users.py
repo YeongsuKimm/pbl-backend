@@ -236,17 +236,24 @@ class Vid(db.Model):
     
     def put(self, uid):
         try:
+            # Checks if the user is logged in
             if uid != "None":
+                # Checks if the user hasn't seen the video yet 
                 if uid not in self._accountViewsLikesDislikes["views"]:
+                    # Add them to the list now that they've seen the video
                     self._accountViewsLikesDislikes["views"].append(uid)
-                    print(" before commit", self._accountViewsLikesDislikes['views'])
+
+                    # Increase the number of views by 1
                     self._views += 1
+
+                    # Flag modified for some reason has to be here to update a dictionary field in SqlAlchemy 
+                    # https://stackoverflow.com/questions/42559434/updates-to-json-field-dont-persist-to-db
                     flag_modified(self, "_accountViewsLikesDislikes")
                     db.session.add(self)
                     db.session.commit()
-                    print(" After commit", self._accountViewsLikesDislikes['views'])
                     return self
             else:
+                # If the user isn't logged in just increase the views by one
                 self._views += 1
                 db.session.commit()
                 return self
@@ -255,13 +262,21 @@ class Vid(db.Model):
         
     def like(self, uid):
         try:
+            # User must be logged in for this to work
             if uid != 'None':
-                if uid not in self._accountViewsLikesDislikes["likes"]:
+                # If the user hasn't liked the video yet
+                if uid not in self._accountViewsLikesDislikes["likes"]: 
+                    # User has disliked a video then we have to remove them from dislikes now
                     if uid in self._accountViewsLikesDislikes["dislikes"]:
                         self._dislikes -= 1
                         self._accountViewsLikesDislikes["dislikes"].remove(uid)
+
+                    #Increase likes by 1 and make sure add to the list of users who's liked
                     self._accountViewsLikesDislikes["likes"].append(uid)
                     self._likes += 1
+                    # Flag modified for some reason has to be here to update a dictionary field in SqlAlchemy 
+                    # https://stackoverflow.com/questions/42559434/updates-to-json-field-dont-persist-to-db
+  
                     flag_modified(self, "_accountViewsLikesDislikes")
                     db.session.commit()
                     return self
@@ -275,13 +290,21 @@ class Vid(db.Model):
     
     def dislike(self, uid):
         try:
+            # User must be logged in for this to work
             if uid != 'None':
+                # If the user hasn't disliked the video yet
                 if uid not in self._accountViewsLikesDislikes["dislikes"]:
+                # if a user has liked a video then we have to remove them from dislikes now
                     if uid in self._accountViewsLikesDislikes["likes"]:
                         self._likes -= 1
                         self._accountViewsLikesDislikes["likes"].remove(uid)
+                    # Increase dislikes + add the user now to the dislike playlist
                     self._accountViewsLikesDislikes["dislikes"].append(uid)
                     self._dislikes += 1
+                    
+                    # Flag modified for some reason has to be here to update a dictionary field in SqlAlchemy 
+                    # https://stackoverflow.com/questions/42559434/updates-to-json-field-dont-persist-to-db
+  
                     flag_modified(self, "_accountViewsLikesDislikes")
                     db.session.commit()
                     return self                  
