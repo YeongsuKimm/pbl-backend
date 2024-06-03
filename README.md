@@ -9,7 +9,10 @@
 - Login and Authentication
 - Playlist creation 
 
-
+# Tip Prediction Model
+- The user inputs all the necessary details about their personel and their visit (time of day, day of the week, total bill, etc.)
+- The user can pick which predicition model that they would like to use as it contains two.
+- This model returns the predicited amount for the tip.
 
 # Try it out yourself!
 - Login as
